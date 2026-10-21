@@ -107,9 +107,9 @@ Esto instalará en nuestro proyectos los skills de OpenSpec para poder trabajar 
 6. Arrancar agente IA
 El desarrollo agentico se ha hecho através de 6 changes:
 
-  1. Crear el fichero model.sql con todas las entidades de negocio según requisitos funcionales.
-  2. Ejecutar el fichero model.sql creado contra la instancia remota SQL Server utilizando el MCP.
-  3. Crear el fichero mocks.sql con todos los registros mocks según requisitos funcionales.
-  4. Ejecutar el fichero mocks.sql insertando todos los registros mocks remotamente enla SQL Server utilizando el MCP.
-  5. Crear el fichero queries.sql con todas las consultas según requisitos funcionales.
-  6. Ejecutar el fichero queries.sql recuperando los registros remotamente en la SQL Server utilizando el MCP. El resultado sera volcado a un fichero results.md
+- Crear el fichero model.sql con todas las entidades de negocio según requisitos funcionales.
+- Ejecutar el fichero model.sql creado contra la instancia remota SQL Server utilizando el MCP.
+- Crear el fichero mocks.sql con todos los registros mocks según requisitos funcionales.
+- Ejecutar el fichero mocks.sql insertando todos los registros mocks remotamente enla SQL Server utilizando el MCP.
+- Crear el fichero queries.sql con todas las consultas según requisitos funcionales.
+- Ejecutar el fichero queries.sql recuperando los registros remotamente en la SQL Server utilizando el MCP. El resultado sera volcado a un fichero results.md
