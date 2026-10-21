@@ -112,4 +112,4 @@ El desarrollo agentico se ha hecho através de 6 changes:
   3. Crear el fichero mocks.sql con todos los registros mocks según requisitos funcionales.
   4. Ejecutar el fichero mocks.sql insertando todos los registros mocks remotamente enla SQL Server utilizando el MCP.
   5. Crear el fichero queries.sql con todas las consultas según requisitos funcionales.
-  6. Ejecutar el fichero queries.sql recuperando los registros remotamente en la SQL Server utilizando el MCP, el resultado volcarlo a un fichero results.md
+  6. Ejecutar el fichero queries.sql recuperando los registros remotamente en la SQL Server utilizando el MCP. El resultado sera volcado a un fichero results.md
