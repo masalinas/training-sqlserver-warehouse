@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "mssql": {
+      "command": "/home/miguel/git/mssql_mcp_server/.venv/bin/python",
+      "args": [
+        "-m",
+        "mssql_mcp_server"
+      ],
+      "env": {
+        "MSSQL_SERVER": "127.0.0.1",
+        "MSSQL_PORT": "1434",
+        "MSSQL_DATABASE": "training",
+        "MSSQL_ENCRYPT": "false",
+        "MSSQL_USER": "sa",
+        "MSSQL_PASSWORD": "!Thingtrack2010"
+      }
+    }
+  }
+}
