@@ -26,7 +26,7 @@ Antes de que los agentes comiencen a crear el entorno. Debemos de asegurarnos de
 Esto confirma que desde el host 127.0.0.1 vemos el puerto 1433 que realmente esta arrancado en la VM Windows 11
 
 ## Proyecto agentico
-Ahora que ya podemos llegar a SQL Server desde el host creamos nuestro proyecto agentico con OpenSpec:
+Ahora que ya podemos llegar a SQL Server desde el host creamos nuestro proyecto agentico con OpenSpec. Estos son todas las etapas seguidas junto al agente para implementar la PoC:
 
 1. Creamos el working folder del Proyecto
   ```shell
