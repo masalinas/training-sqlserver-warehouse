@@ -1,8 +1,8 @@
-# warehouse-stock Specification
+# warehouse Specification
 
 ## Purpose
 
-Proporciona el modelo de datos relacional y las restricciones de integridad para gestionar las estanterías del almacén y el stock de productos ubicado en las mismas.
+Proporciona la especificación completa del sistema de gestión de almacén en Microsoft SQL Server, abarcando el modelo de datos relacional (Estanteria y Stock), las restricciones de integridad, el aprovisionamiento y despliegue idempotente mediante MCP mssql, la generación de datos mock y el conjunto de consultas analíticas operativas.
 
 ## Requirements
 
@@ -65,6 +65,27 @@ El sistema SHALL contener la definición completa del esquema T-SQL en un archiv
 - **WHEN** se implementa el modelo de base de datos
 - **THEN** el script T-SQL resultante se encuentra en `model.sql`
 
+### Requirement: Despliegue de Esquemas T-SQL con Separadores de Lote
+El sistema SHALL permitir desplegar scripts T-SQL que contienen separadores de lote cliente `GO` mediante el servidor MCP `mssql`, segmentando el script en lotes ejecutables individualmente a través de la herramienta `execute_sql`.
+
+#### Scenario: Despliegue exitoso de tablas idempotentes
+- **WHEN** se envía el script `model.sql` segmentado por lotes secuenciales
+- **THEN** la base de datos elimina previamente las tablas existentes si existen y crea las tablas `dbo.Estanteria` y `dbo.Stock` con sus restricciones asociadas sin errores de sintaxis
+
+### Requirement: Verificación Automatizada de Restricciones
+El sistema SHALL ejecutar la suite de pruebas de integridad `test_restricciones.sql` mediante el MCP `mssql` para certificar que el modelo desplegado aplica de forma estricta las reglas de negocio y restricciones relacionales.
+
+#### Scenario: Validación de casos positivos y negativos
+- **WHEN** se ejecuta el script de pruebas sobre las tablas creadas
+- **THEN** el sistema registra la inserción exitosa de registros válidos y captura el rechazo esperado ante violaciones de unicidad, formato de códigos, coordenadas negativas, cantidades no positivas y claves foráneas inexistentes
+
+### Requirement: Exposición de Recursos MCP
+El servidor MCP `mssql` SHALL exponer como recursos navegables (`resources`) las tablas de usuario creadas en el modelo de base de datos.
+
+#### Scenario: Descubrimiento de recursos de tablas
+- **WHEN** un cliente MCP solicita el listado de recursos mediante `list_resources`
+- **THEN** la respuesta incluye los URIs `mssql://Estanteria/data` y `mssql://Stock/data`
+
 ### Requirement: Generación y carga de datos mock
 El sistema SHALL proporcionar un script denominado `mocks.sql` para poblar la base de datos con datos de prueba siguiendo las siguientes reglas:
 - Realizar limpieza previa completa y ordenada de las tablas `Stock` y `Estanteria`, reiniciando los contadores autonuméricos (`IDENTITY`).
@@ -80,6 +101,17 @@ El sistema SHALL proporcionar un script denominado `mocks.sql` para poblar la ba
 #### Scenario: Distribución de stock en estanterías autorizadas
 - **WHEN** se consultan las ubicaciones asignadas en la tabla `Stock` tras ejecutar `mocks.sql`
 - **THEN** todos los registros de stock están asociados únicamente a ubicaciones de las estanterías `E01` y `E02`, y ninguna ubicación de `E03` posee stock asignado
+
+### Requirement: Aprovisionamiento y Validación de Datos Mock mediante MCP
+El sistema SHALL permitir el aprovisionamiento de datos mock en la base de datos Microsoft SQL Server mediante la ejecución del script `mocks.sql` a través de la herramienta `execute_sql` del servidor MCP `mssql`, garantizando la verificación remota de la distribución de ubicaciones y stock.
+
+#### Scenario: Ejecución de mocks mediante MCP
+- **WHEN** un cliente MCP ejecuta las sentencias de `mocks.sql` sobre la base de datos utilizando `execute_sql`
+- **THEN** la base de datos se limpia de forma ordenada y se pueblan exactamente 36 ubicaciones en `Estanteria` y registros de stock en `Stock` sin errores de clave foránea ni de unicidad
+
+#### Scenario: Certificación de aislamiento en estanterías
+- **WHEN** se consulta el conteo de stock por estantería mediante `execute_sql` tras el aprovisionamiento
+- **THEN** el resultado confirma que las estanterías `E01` y `E02` contienen stock asociado y que la estantería `E03` contiene exactamente 0 registros de stock
 
 ### Requirement: Consultas Analíticas del Almacén
 El sistema SHALL proporcionar un script denominado `queries.sql` con un conjunto de consultas analíticas optimizadas en T-SQL para verificar el estado operativo del almacén y sus datos:
@@ -103,3 +135,14 @@ El sistema SHALL proporcionar un script denominado `queries.sql` con un conjunto
 #### Scenario: Listado de productos con caducidad más cercana
 - **WHEN** se ejecuta la consulta de proximidad de caducidad
 - **THEN** el resultado retorna exactamente los 2 productos con la menor fecha de caducidad válida (`IS NOT NULL`) ordenados ascendentemente
+
+### Requirement: Persistencia y Documentación de Resultados Analíticos
+El sistema SHALL volcar el resultado de la ejecución de las consultas contenidas en `queries.sql` en un archivo denominado `results.md` en la raíz del proyecto, presentando de forma legible y estructurada el código SQL ejecutado y su correspondiente tabla de resultados obtenida a través de la herramienta `execute_sql` del servidor MCP `mssql`.
+
+#### Scenario: Generación exitosa de results.md
+- **WHEN** se ejecutan las consultas analíticas de `queries.sql` mediante el MCP `mssql`
+- **THEN** se crea el archivo `results.md` conteniendo las 4 consultas analíticas junto a sus tablas de resultados formateadas en Markdown
+
+#### Scenario: Correspondencia de datos analíticos
+- **WHEN** se inspecciona el archivo `results.md`
+- **THEN** los resultados reflejan la rotura de stock para `P00`, la estantería vacía `E03`, los extremos de ocupación para `E02` y `E03`, y los 2 productos con vencimiento más próximo ordenados ascendentemente
