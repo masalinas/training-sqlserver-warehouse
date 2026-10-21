@@ -26,11 +26,15 @@ BEGIN TRY
     VALUES ('E01', 0, 0);
     SET @EstanteriaId1 = SCOPE_IDENTITY();
     
+    -- Segunda ubicación válida en la misma estantería E01
+    INSERT INTO dbo.Estanteria (CodigoEstanteria, x, y)
+    VALUES ('E01', 0, 1);
+
     INSERT INTO dbo.Estanteria (CodigoEstanteria, x, y)
     VALUES ('E02', 15, 3);
     SET @EstanteriaId2 = SCOPE_IDENTITY();
 
-    PRINT '  [OK] Prueba 1: Inserción de estanterías válidas (E01, E02).';
+    PRINT '  [OK] Prueba 1: Inserción de estanterías y múltiples ubicaciones válidas (E01 en (0,0) y (0,1), E02).';
     SET @PruebasExitosas = @PruebasExitosas + 1;
 END TRY
 BEGIN CATCH
@@ -71,14 +75,14 @@ BEGIN CATCH
     SET @PruebasExitosas = @PruebasExitosas + 1;
 END CATCH;
 
--- Test 4: Rechazo por duplicidad de CodigoEstanteria
+-- Test 4: Rechazo por duplicidad de ubicación (CodigoEstanteria, x, y)
 SET @TotalPruebas = @TotalPruebas + 1;
 BEGIN TRY
-    INSERT INTO dbo.Estanteria (CodigoEstanteria, x, y) VALUES ('E01', 5, 2);
-    PRINT '  [FALLO] Prueba 4: Se permitió duplicar CodigoEstanteria existente.';
+    INSERT INTO dbo.Estanteria (CodigoEstanteria, x, y) VALUES ('E01', 0, 0);
+    PRINT '  [FALLO] Prueba 4: Se permitió duplicar ubicación (E01, 0, 0) existente.';
 END TRY
 BEGIN CATCH
-    PRINT '  [OK] Prueba 4: Rechazada duplicidad en CodigoEstanteria (esperado UNIQUE).';
+    PRINT '  [OK] Prueba 4: Rechazada duplicidad de ubicación (esperado UNIQUE UQ_Estanteria_Ubicacion).';
     SET @PruebasExitosas = @PruebasExitosas + 1;
 END CATCH;
 

@@ -32,8 +32,8 @@ CREATE TABLE dbo.Estanteria (
     -- Clave Primaria
     CONSTRAINT PK_Estanteria PRIMARY KEY CLUSTERED (EstanteriaId),
 
-    -- Unicidad del código de estantería
-    CONSTRAINT UQ_Estanteria_CodigoEstanteria UNIQUE (CodigoEstanteria),
+    -- Unicidad de ubicación (una estantería no puede repetir coordenadas x, y)
+    CONSTRAINT UQ_Estanteria_Ubicacion UNIQUE (CodigoEstanteria, x, y),
 
     -- Formato: 'E' mayúscula seguida de 2 dígitos numéricos (ej. E00 - E99)
     CONSTRAINT CK_Estanteria_CodigoEstanteria CHECK (
